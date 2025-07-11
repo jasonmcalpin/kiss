@@ -1,0 +1,64 @@
+services:
+  frontend:
+    build: 
+      context: ./frontend/
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/usr/src/app
+    working_dir: /usr/src/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - kiss-network
+  backend:
+    build: 
+      context: ./backend/
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    depends_on:
+      - mysql
+    environment:
+      - DATABASE_HOST=${KISS_MYSQL_HOST}
+      - DATABASE_USER=${KISS_MYSQL_USER}
+      - DATABASE_PASSWORD=${KISS_MYSQL_PASSWORD}
+      - DATABASE_NAME=${KISS_MYSQL_DATABASE}
+    networks:
+      - kiss-network
+    volumes:
+      - ./backend/app:/var/www/html
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${KISS_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${KISS_MYSQL_DATABASE}
+      MYSQL_USER: ${KISS_MYSQL_USER}
+      MYSQL_PASSWORD: ${KISS_MYSQL_PASSWORD}
+    volumes:
+      - ./database/data:/var/lib/mysql
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - kiss-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      PMA_HOST: ${KISS_MYSQL_HOST}
+      PMA_PORT: ${KISS_MYSQL_PORT}
+      PMA_ARBITRARY: 0
+      UPLOAD_LIMIT: 64M
+      MEMORY_LIMIT: 128M
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - kiss-network
+
+networks:
+  kiss-network:
+    driver: bridge
