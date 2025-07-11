@@ -146,6 +146,53 @@ docker compose down -v
 ```
 
 ### Troubleshooting
+#### Windows WSL
+If you cant get some of the commands to run such as lint or jest you might need to run the linux subsystem. 
+If you need to install the subsytem use these commands:
+
+``` 
+Open an adminstrator command prompt.
+
+wsl --install
+```
+
+This will install Ubuntu. If there is another distro you want to use then see if it is available with:
+
+```
+wsl --list --online
+```
+
+If you find a distro you want to install run:
+
+```
+wsl --install -d [distroName]
+
+examples:
+wsl --install -d Debian 
+wsl --install -d FedoraLinux-42
+```
+
+once installed you can start the linux subsystem with:
+
+```
+wsl
+```
+
+Its pretty simple and lets you use all your usual linux commands if you come from there or OSX. 
+
+You will find that your hard drives are listed under `/mnt/[driveLetter]`
+
+If you use .ssh keys you will need to copy them to the `~/.ssh` folder. Use this command to do it:
+```
+cp -r /mnt/c/Users/<your_username>/.ssh ~/.ssh
+```
+just remember to change the username. then change the permissions so they work:
+
+```
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/<authorizedKey>
+```
+this will let you use your keys with github from the subsystem. 
 
 #### Docker Credential Issues
 If you encounter an error like `docker-credential-desktop: executable file not found`, try these solutions:
