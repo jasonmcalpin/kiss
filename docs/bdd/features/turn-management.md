@@ -1,0 +1,1 @@
+take turn in nation actions such as resource management, diplomacy and combat.

@@ -1,0 +1,1 @@
+you got a nation and took over a planet. what resources do you get and what can you do with them? make ships and expand production. maybe make wonder?

@@ -1,0 +1,1 @@
+how much control do players want over the maps. maybe an option to keep it just for the game or to share with community so they can try it. should be interesting options to make it worth sharing.
