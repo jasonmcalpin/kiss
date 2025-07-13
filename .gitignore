@@ -1,12 +1,22 @@
 node_modules/
 .vscode/
 database/data/
+database/logs/
+database/tmp/
 coverage/
+venv/
+__pycache__/
 
+.DS_Store
+*.py[cod]
 .env
 *.tmp
 *.log
 *~
+
+*.sql.backup
+*.dump
+
 
 
 package.json
