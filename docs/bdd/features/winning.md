@@ -1,1 +1,0 @@
-the win condition is? claim the most planets or resources and it can be a solo win or a team win.
