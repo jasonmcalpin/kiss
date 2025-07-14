@@ -6,3 +6,11 @@
 ## Setting
 The game is about creating an empire of your own. will it be a trade empire or a military one? Will you join forces or go it alone? The choice is yours. Each player will start on a random homeworld and can choose a special ability. Name your race and create a flag to represent your empire. You can explore the galaxy, build ships, colonize worlds and trade with other players. Watchout the old empire may still have a few ships out there protecting planets or resouces. 
 
+The goal is to build up your forces before the empire returns to survive.
+
+## Feel
+The game is called KISS. So for some fun lets and at the end the fleet commander will blow a kiss and wave goodbye when the player loses. When they win the commander will blow a kiss and clap well done. I want something distinctive and fun to make it stand out.
+
+- Five Star Stories. Its anime and mecha but all about style and fashion.
+- Stellar Blade. Sexy and Stylish. 
+- Frost Punk. Build up a civilization before time runs out. 

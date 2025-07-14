@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universe Map - 30x30 Hex Grid</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      height: 100vh;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #cbd5e1;
+      font-family: 'Orbitron', monospace;
+      padding: 0;
+      margin: 0;
+      overflow: auto;
+      height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      padding: 20px;
+      height: 100vh;
+    }
+
+    .map-container {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border: 2px solid #3b82f6;
+      padding: 20px;
+      border-radius: 3px;
+      position: relative;
+      overflow: auto;
+      flex-grow: 1;
+      height: calc(100vh - 40px);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .map-title {
+      color: #f1f5f9;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-align: center;
+      text-shadow: 0 0 10px #3b82f6;
+    }
+
+    .hex-grid {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 140px);
+      overflow: auto;
+      background: radial-gradient(circle at 50% 50%, rgba(0, 20, 40, 0.3) 0%, transparent 70%);
+    }
+
+    .hex {
+      position: absolute;
+      width: 40px;
+      height: 46px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .hex-inner {
+      width: 100%;
+      height: 100%;
+      background: #0f172a;
+      clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
+      border: 1px solid #475569;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .hex:hover .hex-inner {
+      transform: scale(1.2);
+      z-index: 10;
+      box-shadow: 0 0 15px currentColor;
+      border: 2px solid currentColor;
+    }
+
+    .hex.selected .hex-inner {
+      border: 2px solid #f97316;
+      box-shadow: 0 0 12px #f97316;
+      z-index: 5;
+    }
+
+    /* Space terrain types */
+    .hex.empty .hex-inner {
+      background: #0f172a00;
+      color: #475569;
+    }
+
+    .hex.red_giant .hex-inner {
+      background: radial-gradient(circle, #dc2626 30%, #991b1b 70%);
+      color: #fca5a5;
+      box-shadow: inset 0 0 8px #dc2626;
+    }
+
+    .hex.blue_giant .hex-inner {
+      background: radial-gradient(circle, #2563eb 30%, #1d4ed8 70%);
+      color: #93c5fd;
+      box-shadow: inset 0 0 8px #2563eb;
+    }
+
+    .hex.yellow_dwarf .hex-inner {
+      background: radial-gradient(circle, #f59e0b 30%, #d97706 70%);
+      color: #fcd34d;
+      box-shadow: inset 0 0 8px #f59e0b;
+    }
+
+    .hex.white_dwarf .hex-inner {
+      background: radial-gradient(circle, #e5e7eb 30%, #9ca3af 70%);
+      color: #f9fafb;
+      box-shadow: inset 0 0 8px #e5e7eb;
+    }
+
+    .hex.neutron_star .hex-inner {
+      background: radial-gradient(circle, #06b6d4 30%, #0891b2 70%);
+      color: #a5f3fc;
+      box-shadow: inset 0 0 8px #06b6d4;
+    }
+
+    .hex.black_hole .hex-inner {
+      background: radial-gradient(circle, #000000 20%, #4c1d95 60%, #1e1b4b 100%);
+      color: #a78bfa;
+      box-shadow: inset 0 0 12px #4c1d95;
+    }
+
+    .hex.nebula .hex-inner {
+      background: radial-gradient(ellipse, #be185d 20%, #7c3aed 50%, #1e1b4b 80%);
+      color: #f9a8d4;
+      box-shadow: inset 0 0 10px #be185d;
+    }
+
+    .hex.asteroid_field .hex-inner {
+      background: radial-gradient(circle, #78716c 30%, #57534e 70%);
+      color: #d6d3d1;
+      box-shadow: inset 0 0 6px #78716c;
+    }
+
+    .hex.gas_giant .hex-inner {
+      background: radial-gradient(circle, #059669 30%, #047857 70%);
+      color: #6ee7b7;
+      box-shadow: inset 0 0 8px #059669;
+    }
+
+    .hex.pulsar .hex-inner {
+      background: radial-gradient(circle, #f97316 30%, #ea580c 70%);
+      color: #fed7aa;
+      box-shadow: inset 0 0 10px #f97316;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    .info-panel {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      border: 2px solid #3b82f6;
+      padding: 20px;
+      border-radius: 5px;
+      min-width: 350px;
+      max-width: 450px;
+      height: calc(100vh - 40px);
+      max-height: 100vh;
+      overflow-y: auto;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+    }
+
+    .panel-title {
+      color: #f1f5f9;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 1px solid #3b82f6;
+      padding-bottom: 8px;
+      text-shadow: 0 0 5px #3b82f6;
+    }
+
+    .cell-info {
+      margin-bottom: 20px;
+    }
+
+    .cell-property {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+      padding: 8px 12px;
+      background: rgba(59, 130, 246, 0.1);
+      border-left: 3px solid #3b82f6;
+      font-size: 12px;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .property-label {
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .property-value {
+      color: #3b82f6;
+      font-weight: 700;
+    }
+
+    .property-value.civilized {
+      color: #10b981;
+    }
+
+    .property-value.hostile {
+      color: #ef4444;
+    }
+
+    .property-value.neutral {
+      color: #f59e0b;
+    }
+
+    .property-value.unexplored {
+      color: #6b7280;
+    }
+
+    .property-value.high {
+      color: #ef4444;
+    }
+
+    .property-value.low {
+      color: #10b981;
+    }
+
+    .property-value.medium {
+      color: #f97316;
+    }
+
+    .json-output {
+      background: #0f172a;
+      border: 1px solid #3b82f6;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      color: #cbd5e1;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .controls {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: #334155;
+      border: 1px solid #3b82f6;
+      color: #cbd5e1;
+      padding: 8px 12px;
+      font-family: inherit;
+      font-size: 10px;
+      cursor: pointer;
+      border-radius: 4px;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+      letter-spacing: 1px;
+    }
+
+    .btn:hover {
+      background: #f97316;
+      color: #1e293b;
+      box-shadow: 0 0 10px #f97316;
+      border-color: #f97316;
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      margin-bottom: 15px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 9px;
+      padding: 4px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 3px;
+    }
+
+    .legend-hex {
+      width: 12px;
+      height: 12px;
+      clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
+      border: 1px solid #333;
+    }
+
+    .coordinates {
+      font-size: 10px;
+      color: #666;
+      margin-top: 5px;
+      text-align: center;
+    }
+
+    .system-details {
+      margin-top: 15px;
+      padding: 12px;
+      background: rgba(0, 136, 255, 0.1);
+      border: 1px solid #0088ff;
+      border-radius: 4px;
+    }
+
+    .planet-list {
+      font-size: 10px;
+      color: #0088ff;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    .trade-routes {
+      margin-top: 10px;
+      font-size: 10px;
+      color: #ffaa44;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="map-container">
+      <div class="map-title">Universe Map - Gamma Quadrant</div>
+      <div class="coordinates">Sector Grid: 30x30 | Stellar Objects: Variable | Hyperlane Network Active</div>
+      <div id="hexGrid" class="hex-grid"></div>
+    </div>
+
+    <div class="info-panel">
+      <div class="panel-title">Stellar Cartography</div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-hex" style="background: #000015;"></div>
+          <span>Empty Space</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-hex" style="background: radial-gradient(circle, #ffcc44 30%, #cc9922 70%);">
+          </div>
+          <span>Yellow Dwarf</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-hex" style="background: radial-gradient(circle, #ff4444 30%, #cc2222 70%);">
+          </div>
+          <span>Red Giant</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-hex" style="background: radial-gradient(circle, #4488ff 30%, #2266cc 70%);">
+          </div>
+          <span>Blue Giant</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-hex" style="background: radial-gradient(circle, #ffffff 30%, #cccccc 70%);">
+          </div>
+          <span>White Dwarf</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-hex" style="background: radial-gradient(circle, #88ffff 30%, #44cccc 70%);">
+          </div>
+          <span>Neutron Star</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-hex" style="background: radial-gradient(circle, #000000 20%, #440088 60%);">
+          </div>
+          <span>Black Hole</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-hex" style="background: radial-gradient(ellipse, #ff44aa 20%, #8822aa 50%);">
+          </div>
+          <span>Nebula</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-hex" style="background: radial-gradient(circle, #886644 30%, #553322 70%);">
+          </div>
+          <span>Asteroid Field</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-hex" style="background: radial-gradient(circle, #ffff44 30%, #aaaa22 70%);">
+          </div>
+          <span>Pulsar</span>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" onclick="exportJSON()">Save Map</button>
+        <button class="btn" onclick="document.getElementById('fileInput').click()">Load Map</button>
+        <button class="btn" onclick="generateGalaxy()">New Galaxy</button>
+        <button class="btn" onclick="clearSpace()">Clear Space</button>
+        <button class="btn" onclick="showHyperlanes()">Hyperlanes</button>
+      </div>
+
+      <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="loadJSON(event)">
+
+      <div class="file-status" id="fileStatus" style="display: none;">
+        <div
+          style="color: #00ff88; font-size: 11px; margin: 10px 0; padding: 8px; background: rgba(0, 255, 136, 0.1); border: 1px solid #00ff88; border-radius: 4px;">
+          <span id="statusText">Ready</span>
+        </div>
+      </div>
+
+      <div class="cell-info">
+        <div class="panel-title">System Analysis</div>
+        <div id="cellData">
+          <div class="cell-property">
+            <span class="property-label">Coordinates</span>
+            <span class="property-value" id="cellPos">Select System</span>
+          </div>
+          <div class="cell-property">
+            <span class="property-label">Stellar Type</span>
+            <span class="property-value" id="cellStellar">-</span>
+          </div>
+          <div class="cell-property">
+            <span class="property-label">Civilization</span>
+            <span class="property-value" id="cellCivilization">-</span>
+          </div>
+          <div class="cell-property">
+            <span class="property-label">Threat Level</span>
+            <span class="property-value" id="cellThreat">-</span>
+          </div>
+          <div class="cell-property">
+            <span class="property-label">Resources</span>
+            <span class="property-value" id="cellResources">-</span>
+          </div>
+          <div class="cell-property">
+            <span class="property-label">Jump Range</span>
+            <span class="property-value" id="cellJumpRange">-</span>
+          </div>
+        </div>
+
+        <div id="systemDetails" class="system-details" style="display: none;">
+          <div style="color: #0088ff; font-weight: bold; font-size: 12px;">System Details:</div>
+          <div id="planetList" class="planet-list"></div>
+          <div id="tradeRoutes" class="trade-routes"></div>
+        </div>
+      </div>
+
+      <div class="panel-title">System Data Stream</div>
+      <div id="jsonOutput" class="json-output">Select a system to view detailed scan data...</div>
+    </div>
+  </div>
+
+  <script>
+    let galacticMap = {};
+    let selectedSystem = null;
+    const stellarTypes = ['empty', 'yellow_dwarf', 'red_giant', 'blue_giant', 'white_dwarf', 'neutron_star', 'black_hole', 'nebula', 'asteroid_field', 'gas_giant', 'pulsar'];
+    const civilizationTypes = ['unexplored', 'neutral', 'civilized', 'hostile', 'ancient'];
+    const resourceTypes = ['none', 'rare_metals', 'exotic_matter', 'dark_energy', 'antimatter', 'quantum_crystals', 'biosynthetics'];
+    const planetTypes = ['terrestrial', 'ocean', 'desert', 'ice', 'volcanic', 'gas_giant', 'toxic', 'crystal'];
+
+    const HEX_WIDTH = 40;
+    const HEX_HEIGHT = 46;
+    const HEX_RADIUS = HEX_WIDTH / 2;
+
+    function offsetToAxial(col, row) {
+      const q = col - (row - (row & 1)) / 2;
+      const r = row;
+      return { q, r };
+    }
+
+    function axialToPixel(q, r) {
+      const x = HEX_RADIUS * (3 / 2 * q);
+      const y = HEX_RADIUS * (Math.sqrt(3) / 2 * q + Math.sqrt(3) * r);
+      return { x: x + 300, y: y + 200 };
+    }
+
+    function getNeighbors(q, r) {
+      const directions = [
+        {q:  1, r:  0}, // East
+        {q:  1, r: -1}, // Northeast
+        {q:  0, r: -1}, // Northwest
+        {q: -1, r:  0}, // West
+        {q: -1, r:  1}, // Southwest
+        {q:  0, r:  1}  // Southeast
+      ];
+
+      return directions.map(dir => ({
+        q: q + dir.q,
+        r: r + dir.r
+      }));
+    }
+
+    function axialToOffset(q, r) {
+      const col = q + (r - (r & 1)) / 2;
+      const row = r;
+      return { col, row };
+    }
+
+    function initializeMap() {
+      const grid = document.getElementById('hexGrid');
+      grid.innerHTML = '';
+      galacticMap = {};
+
+      for (let row = 0; row < 30; row++) {
+        for (let col = 0; col < 30; col++) {
+          const hex = document.createElement('div');
+          hex.className = 'hex';
+
+          const hexInner = document.createElement('div');
+          hexInner.className = 'hex-inner';
+          hex.appendChild(hexInner);
+
+          const axial = offsetToAxial(col, row);
+          const pixel = axialToPixel(axial.q, axial.r);
+
+          hex.style.left = pixel.x + 'px';
+          hex.style.top = pixel.y + 'px';
+
+          hex.dataset.row = row;
+          hex.dataset.col = col;
+          hex.dataset.q = axial.q;
+          hex.dataset.r = axial.r;
+
+          const systemId = `${row},${col}`;
+          galacticMap[systemId] = generateSystemData(row, col, axial.q, axial.r);
+
+          hex.classList.add(galacticMap[systemId].stellarType);
+
+          hex.addEventListener('click', () => selectSystem(row, col, hex));
+
+          grid.appendChild(hex);
+        }
+      }
+
+      calculateHyperlanes();
+    }
+
+    function generateSystemData(row, col, q, r) {
+      const stellarType = getWeightedStellarType();
+      const isEmpty = stellarType === 'empty';
+
+      return {
+        id: `${row},${col}`,
+        name: generateSystemName(row, col),
+        coordinates: { x: col, y: row },
+        axialCoords: { q, r },
+        stellarType: stellarType,
+        stellarMass: isEmpty ? 0 : Math.random() * 50 + 0.5,
+        civilization: isEmpty ? 'empty' : getRandomCivilization(),
+        threatLevel: getThreatLevel(stellarType),
+        explored: Math.random() > 0.6,
+        controlled: Math.random() > 0.8,
+        resources: isEmpty ? 'none' : getRandomResource(),
+        planets: isEmpty ? [] : generatePlanets(stellarType),
+        jumpRange: calculateJumpRange(stellarType),
+        hyperlanes: [],
+        tradeValue: Math.floor(Math.random() * 1000),
+        strategicValue: Math.floor(Math.random() * 10),
+        anomalies: generateAnomalies(),
+        fleetPresence: Math.random() > 0.9,
+        starbaseLevel: Math.random() > 0.85 ? Math.floor(Math.random() * 5) + 1 : 0
+      };
+    }
+
+    // Weighted stellar type generation
+    function getWeightedStellarType() {
+      const weights = {
+        empty: 0.75,
+        yellow_dwarf: 0.08,
+        red_giant: 0.05,
+        blue_giant: 0.025,
+        white_dwarf: 0.04,
+        neutron_star: 0.015,
+        black_hole: 0.01,
+        nebula: 0.02,
+        asteroid_field: 0.01,
+        pulsar: 0.005
+      };
+
+      const rand = Math.random();
+      let sum = 0;
+
+      for (const [type, weight] of Object.entries(weights)) {
+        sum += weight;
+        if (rand <= sum) return type;
+      }
+      return 'empty';
+    }
+
+    function getRandomCivilization() {
+      const weights = {
+        unexplored: 0.4,
+        neutral: 0.3,
+        civilized: 0.2,
+        hostile: 0.08,
+        ancient: 0.02
+      };
+
+      const rand = Math.random();
+      let sum = 0;
+
+      for (const [type, weight] of Object.entries(weights)) {
+        sum += weight;
+        if (rand <= sum) return type;
+      }
+      return 'unexplored';
+    }
+
+    function getThreatLevel(stellarType) {
+      const baseThreat = {
+        empty: 0,
+        yellow_dwarf: 1,
+        red_giant: 3,
+        blue_giant: 4,
+        white_dwarf: 2,
+        neutron_star: 8,
+        black_hole: 10,
+        nebula: 5,
+        asteroid_field: 3,
+        pulsar: 7
+      };
+
+      return Math.min(10, baseThreat[stellarType] + Math.floor(Math.random() * 3));
+    }
+
+    function getRandomResource() {
+      return resourceTypes[Math.floor(Math.random() * resourceTypes.length)];
+    }
+
+    function generatePlanets(stellarType) {
+      const planetCount = stellarType === 'gas_giant' ? 0 : Math.floor(Math.random() * 8);
+      const planets = [];
+
+      for (let i = 0; i < planetCount; i++) {
+        planets.push({
+          name: `Planet ${String.fromCharCode(65 + i)}`,
+          type: planetTypes[Math.floor(Math.random() * planetTypes.length)],
+          size: Math.random() * 3 + 0.5,
+          habitability: Math.random(),
+          resources: getRandomResource(),
+          population: Math.floor(Math.random() * 10000000),
+          orbit: i + 1
+        });
+      }
+
+      return planets;
+    }
+
+    function calculateJumpRange(stellarType) {
+      const ranges = {
+        empty: 1,
+        yellow_dwarf: 3,
+        red_giant: 2,
+        blue_giant: 4,
+        white_dwarf: 2,
+        neutron_star: 1,
+        black_hole: 0,
+        nebula: 1,
+        asteroid_field: 2,
+        pulsar: 1
+      };
+
+      return ranges[stellarType] || 1;
+    }
+
+    function generateSystemName(row, col) {
+      const prefixes = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta'];
+      const suffixes = ['Centauri', 'Draconis', 'Vega', 'Sirius', 'Rigel', 'Altair', 'Procyon', 'Canopus'];
+
+      return `${prefixes[row % prefixes.length]} ${suffixes[col % suffixes.length]} ${row}${col}`;
+    }
+
+    function generateAnomalies() {
+      const anomalyTypes = ['quantum_storm', 'dark_matter_cloud', 'temporal_rift', 'energy_cascade', 'gravity_well'];
+      const anomalies = [];
+
+      if (Math.random() > 0.85) {
+        anomalies.push({
+          type: anomalyTypes[Math.floor(Math.random() * anomalyTypes.length)],
+          intensity: Math.floor(Math.random() * 5) + 1,
+          duration: Math.floor(Math.random() * 100) + 10
+        });
+      }
+
+      return anomalies;
+    }
+
+    function calculateHyperlanes() {
+      for (let row = 0; row < 30; row++) {
+        for (let col = 0; col < 30; col++) {
+          const systemId = `${row},${col}`;
+          const system = galacticMap[systemId];
+          const axial = offsetToAxial(col, row);
+          const neighbors = getNeighbors(axial.q, axial.r);
+
+          system.hyperlanes = neighbors
+            .map(neighbor => {
+              const offset = axialToOffset(neighbor.q, neighbor.r);
+              if (offset.row >= 0 && offset.row < 30 && offset.col >= 0 && offset.col < 30) {
+                const neighborId = `${offset.row},${offset.col}`;
+                const neighborSystem = galacticMap[neighborId];
+                if (neighborSystem && neighborSystem.jumpRange > 0 && system.jumpRange > 0) {
+                  return {
+                    to: neighborId,
+                    distance: 1,
+                    travelTime: Math.floor(Math.random() * 10) + 1,
+                    safety: Math.random()
+                  };
+                }
+              }
+              return null;
+            })
+            .filter(lane => lane !== null);
+        }
+      }
+    }
+
+    function selectSystem(row, col, hexElement) {
+      document.querySelectorAll('.hex.selected').forEach(hex => {
+        hex.classList.remove('selected');
+      });
+
+      hexElement.classList.add('selected');
+      selectedSystem = { row, col };
+
+      const systemId = `${row},${col}`;
+      const systemData = galacticMap[systemId];
+
+      // Update info panel
+      document.getElementById('cellPos').textContent = `${systemData.name}`;
+      document.getElementById('cellStellar').textContent = systemData.stellarType.replace('_', ' ').toUpperCase();
+
+      const civElement = document.getElementById('cellCivilization');
+      civElement.textContent = systemData.civilization.toUpperCase();
+      civElement.className = `property-value ${systemData.civilization}`;
+
+      const threatElement = document.getElementById('cellThreat');
+      threatElement.textContent = systemData.threatLevel;
+      threatElement.className = `property-value ${systemData.threatLevel > 7 ? 'high' : systemData.threatLevel > 3 ? 'medium' : 'low'}`;
+
+      document.getElementById('cellResources').textContent = systemData.resources.replace('_', ' ').toUpperCase();
+      document.getElementById('cellJumpRange').textContent = `${systemData.jumpRange} parsecs`;
+
+      // Show system details
+      if (systemData.stellarType !== 'empty') {
+        const detailsDiv = document.getElementById('systemDetails');
+        const planetList = document.getElementById('planetList');
+        const tradeRoutes = document.getElementById('tradeRoutes');
+
+        let planetText = `Planets: ${systemData.planets.length}\n`;
+        systemData.planets.forEach(planet => {
+          planetText += `• ${planet.name} (${planet.type}, Pop: ${planet.population.toLocaleString()})\n`;
+        });
+
+        planetList.textContent = planetText;
+
+        tradeRoutes.textContent = `Trade Value: ${systemData.tradeValue} credits\nHyperlanes: ${systemData.hyperlanes.length} active routes\nStarbase Level: ${systemData.starbaseLevel || 'None'}`;
+
+        detailsDiv.style.display = 'block';
+      } else {
+        document.getElementById('systemDetails').style.display = 'none';
+      }
+
+      document.getElementById('jsonOutput').textContent = JSON.stringify(systemData, null, 2);
+    }
+
+    function showHyperlanes() {
+      if (!selectedSystem) {
+        alert('Please select a system first');
+        return;
+      }
+
+      const systemId = `${selectedSystem.row},${selectedSystem.col}`;
+      const systemData = galacticMap[systemId];
+
+      document.querySelectorAll('.hex').forEach(hex => {
+        hex.style.opacity = '0.3';
+      });
+
+      const selectedHex = document.querySelector(`[data-row="${selectedSystem.row}"][data-col="${selectedSystem.col}"]`);
+      selectedHex.style.opacity = '1';
+
+      systemData.hyperlanes.forEach(lane => {
+        const [nRow, nCol] = lane.to.split(',').map(Number);
+        const neighborHex = document.querySelector(`[data-row="${nRow}"][data-col="${nCol}"]`);
+        if (neighborHex) {
+          neighborHex.style.opacity = '1';
+          neighborHex.style.boxShadow = '0 0 15px #f97316';
+        }
+      });
+
+      setTimeout(() => {
+        document.querySelectorAll('.hex').forEach(hex => {
+          hex.style.opacity = '1';
+          hex.style.boxShadow = '';
+        });
+      }, 3000);
+    }
+
+    function exportJSON() {
+      const output = {
+        galacticSector: {
+          name: "Universe Map - Gamma Quadrant",
+          size: { width: 30, height: 30 },
+          totalSystems: 900,
+          coordinateSystem: "offset_with_axial",
+          tessellation: "hexagonal_edge_to_edge",
+          hyperlanNetwork: "active",
+          generated: new Date().toISOString(),
+          gameType: "space_exploration",
+          version: "1.0"
+        },
+        systems: galacticMap
+      };
+
+      document.getElementById('jsonOutput').textContent = JSON.stringify(output, null, 2);
+
+      // Create and download file
+      const blob = new Blob([JSON.stringify(output, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+
+      // Generate filename with timestamp
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+      a.download = `galactic_sector_${timestamp}.json`;
+
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      // Show status
+      showStatus(`Map saved as galactic_sector_${timestamp}.json`, 'success');
+    }
+
+    function loadJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (!file.name.endsWith('.json')) {
+        showStatus('Error: Please select a JSON file', 'error');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const data = JSON.parse(e.target.result);
+
+          // Validate the data structure
+          if (!data.galacticSector || !data.systems) {
+            throw new Error('Invalid map file format');
+          }
+
+          if (data.galacticSector.size.width !== 30 || data.galacticSector.size.height !== 30) {
+            throw new Error('Map size must be 30x30');
+          }
+
+          // Load the map data
+          galacticMap = data.systems;
+
+          // Update the visual map
+          updateVisualMap();
+
+          // Clear any selection
+          selectedSystem = null;
+          document.querySelectorAll('.hex.selected').forEach(hex => {
+            hex.classList.remove('selected');
+          });
+
+          // Update info panel
+          document.getElementById('cellPos').textContent = 'Map Loaded';
+          document.getElementById('cellStellar').textContent = '-';
+          document.getElementById('cellCivilization').textContent = '-';
+          document.getElementById('cellThreat').textContent = '-';
+          document.getElementById('cellResources').textContent = '-';
+          document.getElementById('cellJumpRange').textContent = '-';
+          document.getElementById('systemDetails').style.display = 'none';
+
+          document.getElementById('jsonOutput').textContent = `Map loaded successfully!\nFile: ${file.name}\nGenerated: ${data.galacticSector.generated || 'Unknown'}\nSystems: ${Object.keys(data.systems).length}`;
+
+          showStatus(`Successfully loaded ${file.name}`, 'success');
+
+        } catch (error) {
+          showStatus(`Error loading map: ${error.message}`, 'error');
+          console.error('Error loading JSON:', error);
+        }
+      };
+
+      reader.onerror = function () {
+        showStatus('Error reading file', 'error');
+      };
+
+      reader.readAsText(file);
+
+      // Reset file input
+      event.target.value = '';
+    }
+
+    function updateVisualMap() {
+      // Update all hex elements to match loaded data
+      for (let row = 0; row < 30; row++) {
+        for (let col = 0; col < 30; col++) {
+          const systemId = `${row},${col}`;
+          const systemData = galacticMap[systemId];
+          const hex = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+
+          if (hex && systemData) {
+            // Remove all terrain classes
+            stellarTypes.forEach(type => {
+              hex.classList.remove(type);
+            });
+
+            // Add the correct terrain class
+            hex.classList.add(systemData.stellarType);
+          }
+        }
+      }
+    }
+
+    function showStatus(message, type) {
+      const statusDiv = document.getElementById('fileStatus');
+      const statusText = document.getElementById('statusText');
+
+      statusText.textContent = message;
+      statusDiv.style.display = 'block';
+
+      // Change color based on type
+      if (type === 'error') {
+        statusDiv.querySelector('div').style.borderColor = '#ef4444';
+        statusDiv.querySelector('div').style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+        statusText.style.color = '#ef4444';
+      } else {
+        statusDiv.querySelector('div').style.borderColor = '#10b981';
+        statusDiv.querySelector('div').style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+        statusText.style.color = '#10b981';
+      }
+
+      // Hide after 3 seconds
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+      }, 3000);
+    }
+
+    function generateGalaxy() {
+      initializeMap();
+      document.getElementById('jsonOutput').textContent = 'New galaxy generated! Select a system to scan...';
+    }
+
+    function clearSpace() {
+      for (let row = 0; row < 30; row++) {
+        for (let col = 0; col < 30; col++) {
+          const systemId = `${row},${col}`;
+          galacticMap[systemId].stellarType = 'empty';
+          galacticMap[systemId].civilization = 'empty';
+          galacticMap[systemId].planets = [];
+          galacticMap[systemId].resources = 'none';
+          galacticMap[systemId].jumpRange = 1;
+        }
+      }
+
+      document.querySelectorAll('.hex').forEach(hex => {
+        hex.className = 'hex empty';
+      });
+
+      document.getElementById('jsonOutput').textContent = 'Sector cleared to empty space...';
+    }
+
+    document.addEventListener('DOMContentLoaded', initializeMap);
+  </script>
+</body>
+
+</html>
