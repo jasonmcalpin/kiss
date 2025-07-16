@@ -56,13 +56,7 @@
 - [ ] **Development Environment** - Consistent local setup with Docker
 - [ ] **Debugging** - Comprehensive logging and error tracking
 
-## Accessibility Requirements
-- [ ] **WCAG Compliance** - Meet AA accessibility standards
-- [ ] **Screen Reader Support** - Proper ARIA labels and structure
-- [ ] **Keyboard Navigation** - Full functionality without mouse
-- [ ] **Color Contrast** - High contrast for readability
-- [ ] **Font Scaling** - Support for user font size preferences
-- [ ] **Mobile Accessibility** - Touch-friendly interface design
+
 
 ## Data Requirements
 - [ ] **Data Persistence** - Game state survives server restarts
@@ -71,3 +65,13 @@
 - [ ] **Data Backup** - Regular automated backups
 - [ ] **Data Migration** - Support for schema updates
 - [ ] **Data Analytics** - Game metrics and user behavior tracking
+
+# Tier 1 - Enhanced Requirements
+
+## Accessibility Requirements
+- [ ] **WCAG Compliance** - Meet AA accessibility standards
+- [ ] **Screen Reader Support** - Proper ARIA labels and structure
+- [ ] **Keyboard Navigation** - Full functionality without mouse
+- [ ] **Color Contrast** - High contrast for readability
+- [ ] **Font Scaling** - Support for user font size preferences
+- [ ] **Mobile Accessibility** - Touch-friendly interface design
