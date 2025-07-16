@@ -17,7 +17,7 @@
 
 ## Technical Stack Requirements
 - [ ] **Frontend** - Modern JavaScript (ES6+), CSS Grid/Flexbox
-- [ ] **Backend** - Python with FastAPI or similar
+- [ ] **Backend** - Python with FastAPI
 - [ ] **Database** - MySQL for persistent data
 - [ ] **Real-time** - WebSocket connections for live updates
 - [ ] **Authentication** - JWT token-based security
@@ -48,7 +48,8 @@
 - [ ] **Backup Strategy** - Regular database backups and recovery
 
 ## Development Requirements
-- [ ] **Version Control** - Git with feature branch workflow
+- [ ] **Version Control** - Git with CI/CD integration
+- [ ] **Code Style** - Consistent linting and formatting rules
 - [ ] **Code Quality** - Linting, formatting, and code review
 - [ ] **Testing** - Unit tests, integration tests, and BDD scenarios
 - [ ] **Documentation** - API docs, code comments, and user guides

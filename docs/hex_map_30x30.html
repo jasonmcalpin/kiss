@@ -478,7 +478,7 @@
   <script>
     let galacticMap = {};
     let selectedSystem = null;
-    const stellarTypes = ['empty', 'yellow_dwarf', 'red_giant', 'blue_giant', 'white_dwarf', 'neutron_star', 'black_hole', 'nebula', 'asteroid_field', 'gas_giant', 'pulsar'];
+    const stellarTypes = ['open', 'yellow_dwarf', 'red_giant', 'blue_giant', 'white_dwarf', 'neutron_star', 'black_hole', 'nebula', 'asteroid_field', 'gas_giant', 'pulsar',];
     const civilizationTypes = ['unexplored', 'neutral', 'civilized', 'hostile', 'ancient'];
     const resourceTypes = ['none', 'rare_metals', 'exotic_matter', 'dark_energy', 'antimatter', 'quantum_crystals', 'biosynthetics'];
     const planetTypes = ['terrestrial', 'ocean', 'desert', 'ice', 'volcanic', 'gas_giant', 'toxic', 'crystal'];
@@ -562,7 +562,7 @@
 
     function generateSystemData(row, col, q, r) {
       const stellarType = getWeightedStellarType();
-      const isEmpty = stellarType === 'empty';
+      const isEmpty = stellarType === 'open';
 
       return {
         id: `${row},${col}`,
@@ -571,7 +571,7 @@
         axialCoords: { q, r },
         stellarType: stellarType,
         stellarMass: isEmpty ? 0 : Math.random() * 50 + 0.5,
-        civilization: isEmpty ? 'empty' : getRandomCivilization(),
+        civilization: isEmpty ? 'open' : getRandomCivilization(),
         threatLevel: getThreatLevel(stellarType),
         explored: Math.random() > 0.6,
         controlled: Math.random() > 0.8,
@@ -587,10 +587,9 @@
       };
     }
 
-    // Weighted stellar type generation
     function getWeightedStellarType() {
       const weights = {
-        empty: 0.75,
+        open: 0.75,
         yellow_dwarf: 0.08,
         red_giant: 0.05,
         blue_giant: 0.025,
