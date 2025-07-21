@@ -1,13 +1,22 @@
-'use strict';
+import { createUniverse } from './components/game/creation/UniverseCreation';
 
-/**
- * Game.js
- * Main game logic and state management
- */
-import('./components/game/creation/UniverseCreation')
 
-/**
- * game mainly is connecting to the server to either get the game state or to generate a new game.
- * Also to customizing nation, ships and maps.
- * lets setup the screens 
- */
+export class Game {
+  constructor() {
+    this.universe = null;
+  }
+
+  async createUniverse(data) {
+    try {
+      const response = await createUniverse(data);
+      if (response.success) {
+        this.universe = response.universeId;
+        console.log(`Universe created with ID: ${this.universe}`);
+      } else {
+        console.error(`Failed to create universe: ${response.message}`);
+      }
+    } catch (error) {
+      console.error('Error creating universe:', error);
+    }
+  }
+}
