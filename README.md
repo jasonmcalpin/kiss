@@ -1,7 +1,10 @@
 # KISS (Keep It Simple, Stupid)
 
 ## Description
-KISS is about keeping it simple. I want to make a project that uses as few other tools as possible. Javascript keeps growing and features in frameworks trickle into the base language. Once JQuery was the way to work with the DOM. Now many of its better features have been added to javascript. So this project will see how far I can push base javascript to do what I need. 
+KISS is about keeping it simple. I want to make a project that uses as few other tools as possible. Javascript keeps growing and features in frameworks trickle into the base language. Once JQuery was the way to work with the DOM. Now many of its better features have been added to javascript. So this project will see how far I can push base javascript to do what I need. Much of the interface will be built with es6 and the game logic will be build in Python. The goal is to create a game that is fun to play and easy to understand.
+
+Slow is steady and steady is fast.
+-- Fat Electrician
 
 ## Limitations
 - Modularity. It needs to be easy to add or move features as needed. I've worked on enough enterprise level projects to know that requirements change. So should the code.
@@ -118,7 +121,7 @@ Key variables:
 
 ### Development Workflow
 - Frontend files are in `frontend/public/` and `frontend/src/`
-- Backend PHP files are in `backend/app/`
+- Backend Python files are in `backend/app/`
 - Database files are stored in `database/data/` (persisted on your local filesystem)
 - Database initialization scripts can be placed in `database/init/`
 - Changes to files are automatically reflected (no need to rebuild containers)
