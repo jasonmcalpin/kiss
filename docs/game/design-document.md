@@ -58,7 +58,7 @@ KISS is a strategic empire-building game where players expand across a 32x32 sec
 
 ### Leader Types
 1. **Military Leaders:** Provide combat bonuses to fleets
-2. **Industrial Leaders:** Boost resource production on worlds
+2. **Industrial Leaders:** Boost resource production on systems
 3. **Explorer Leaders:** Increase movement range and exploration benefits
 
 ### Leader Loyalty & Defection
@@ -167,10 +167,10 @@ When encountering any sector, players choose:
 
 ### Resource System
 - **Single Resource Type:** "Production" (represents materials, food, manufacturing)
-- **Generation:** Planets produce resources equal to their R: rating each turn
+- **Generation:** Systems produce resources equal to their R: rating each turn
 - **Usage:** Ship construction, combat costs, upgrades, gifts
 
-### Planet Development
+### System Development
 - **Resource Rating (R:):** 1-5 (resources produced per turn)
 - **Tech Level (T:):** 1-5 (defensive capability, construction cost)
 - **Upgrade Cost:** Tech level = resources required
@@ -230,12 +230,12 @@ When encountering any sector, players choose:
 
 ### Step 1: Resource & Allocation Phase
 **1a. Resource Generation**
-- All planets generate resources equal to their R: rating
+- All systems generate resources equal to their R: rating
 
 **1b. Resource Allocation**
 - Player distributes total resources among leaders/projects
 
-**1c. Planet Actions**
+**1c. System Actions**
 - Choose: Generate resources OR Spend resources (upgrade/build)
 - Continue in-progress construction projects
 
@@ -245,7 +245,7 @@ When encountering any sector, players choose:
 - **Loser moves second:** Responds tactically
 
 ### Step 3: Claims Resolution
-**3a. Claim Unclaimed Sectors/Planets**
+**3a. Claim Unclaimed Sectors/Systems**
 - If only one player present, automatic claim
 - If contested, no automatic claim
 
@@ -268,7 +268,7 @@ When encountering any sector, players choose:
 - Leader abandonment may cause morale penalties
 
 ### Step 6: Capture Resolution
-- Planets reduced to T:0 are captured
+- Systems reduced to T:0 are captured
 - New owner takes control next turn
 
 ---
@@ -349,9 +349,9 @@ When encountering any sector, players choose:
 **Step 0:** Player A plays Ancient Fuel Depot, rolls 4, gains 4 resources
 
 **Step 1:** 
-- All planets generate resources
+- All systems generate resources
 - Player A allocates 8 resources to military leader, 5 to expansion
-- Planet Xerion chooses to upgrade from T:2 to T:3 (costs 3 resources)
+- System Xerion chooses to upgrade from T:2 to T:3 (costs 3 resources)
 
 **Step 2:**
 - Initiative: Player A rolls 4, Player B rolls 6
@@ -371,7 +371,7 @@ When encountering any sector, players choose:
 - No leaders lost, no repositioning needed
 
 **Step 6:**
-- No planets captured this turn
+- No systems captured this turn
 
 ---
 

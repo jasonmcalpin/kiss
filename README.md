@@ -1,7 +1,7 @@
 # KISS (Keep It Simple, Stupid)
 
 ## Description
-KISS is about keeping it simple. I want to make a project that uses as few other tools as possible. Javascript keeps growing and features in frameworks trickle into the base language. Once JQuery was the way to work with the DOM. Now many of its better features have been added to javascript. So this project will see how far I can push base javascript to do what I need. Much of the interface will be built with es6 and the game logic will be build in Python. The goal is to create a game that is fun to play and easy to understand.
+KISS is about keeping it simple. I want to make a project that uses as few other tools as possible. TypeScript provides type safety and better development experience while maintaining the simplicity of JavaScript. This project will see how far I can push TypeScript with vanilla DOM APIs to create a fun lightweight game without heavy frameworks. The frontend and UI will use TypeScript, while the game logic will be built in Python on the backend. The goal is to create a game that is fun to play and easy to understand.
 
 Slow is steady and steady is fast.
 -- Fat Electrician
@@ -20,7 +20,7 @@ Slow is steady and steady is fast.
 - Have fun.
 
 ## Features
-- A game that is desktop and mobile friendly. turned based mutliplayer web game that includes chat, nation building ship building and ability to create alliances for war, trade or just to move through each others territories.
+- A game that is desktop and mobile friendly. turned based mutliplayer web game that includes chat, empire building ship building and ability to create alliances for war, trade or just to move through each others territories.
 - A base framework that lets me add features as each is completed but that doesnt require a complete refactor to add them.
 - Websockets for real time chat. 
 - interface that uses a custom built style system that is easy to use and change. 
@@ -40,8 +40,8 @@ Slow is steady and steady is fast.
 - What are the levels of allegiance? from partner to ally to protectorate etc.
 - Will need documentation for the game for when people need to know how each part works.
 - solidify what data formats will be used and how they will be stored.
-- how are planets created and the races that live on them. I created a planet and alien generator in python that i can use to start the universe for each game.
-- how big will the universe be? 32x32 grid of planets and other objects.
+- how are systems created and the races that live on them. I created a planet and alien generator in python that i can use to start the universe for each game.
+- how big will the universe be? 32x32 grid of sectors containing systems and other objects.
 - how many players can play at once? estimate 4-8 players per universe. 
 - what are the rules of the game?
 - what are the weak points that need security?

@@ -7,7 +7,7 @@ The KISS game follows a modern web application architecture with real-time multi
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   Backend API   │    │   Database      │
-│   (JavaScript)  │◄──►│   (Python)      │◄──►│   (MySQL)       │
+│   (TypeScript)  │◄──►│   (Python)      │◄──►│   (MySQL)       │
 │                 │    │                 │    │                 │
 │ - Game UI       │    │ - REST API      │    │ - Game Data     │
 │ - Real-time     │    │ - WebSockets    │    │ - User Data     │
@@ -27,11 +27,13 @@ The KISS game follows a modern web application architecture with real-time multi
 ## Component Architecture
 
 ### Frontend Layer
-- **Technology**: Vanilla JavaScript (ES6+) with modern CSS
+- **Technology**: TypeScript with modern CSS and DOM APIs
 - **Structure**: Component-based architecture without heavy frameworks
+- **Type Safety**: Compile-time type checking for game state and API contracts
 - **State Management**: Centralized game state with event-driven updates
 - **Communication**: REST API calls + WebSocket for real-time updates
 - **Styling**: Dark infographic theme with CSS Grid/Flexbox
+- **Build Process**: TypeScript compilation to modern JavaScript
 
 ### Backend API Layer
 - **Technology**: Python with FastAPI framework
@@ -165,9 +167,10 @@ Game Events:
 ```
 project/
 ├── frontend/
-│   ├── src/ (JavaScript modules)
+│   ├── src/ (TypeScript modules)
 │   ├── styles/ (CSS files)
-│   └── public/ (static assets)
+│   ├── public/ (static assets)
+│   └── dist/ (compiled JavaScript)
 ├── backend/
 │   ├── src/ (Python modules)
 │   ├── tests/ (test files)

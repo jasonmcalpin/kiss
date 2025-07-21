@@ -9,7 +9,7 @@
 - **MySQL** - Relational database with proper schema design
 - **JWT Authentication** - Secure user management
 - **REST API** - Well-structured backend endpoints
-- **Modern Frontend** - Clean JavaScript with dark infographic styling
+- **TypeScript Frontend** - Type-safe code with dark infographic styling
 - **Docker** - Containerized development environment
 
 ## Features in This Tier
