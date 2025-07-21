@@ -1,0 +1,1 @@
+what do players experience as the game starts. what do they want to see.

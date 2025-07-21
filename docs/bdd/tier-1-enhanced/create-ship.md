@@ -1,0 +1,1 @@
+pick stats and colors maybe. must be some interesting features that can be added based on stats or nation stats.
